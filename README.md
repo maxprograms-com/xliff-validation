@@ -1,6 +1,6 @@
 # xliff-validation
 
-This project is an example of how to use [TypesXLIFF](https://github.com/maxprograms-com/typesxliff) to validate XLIFF files from a command-line interface (CLI).
+This project is an example of how to use [TypesXLIFF](https://github.com/maxprograms-com/typesxliff) to validate XLIFF 2.x files from a command-line interface (CLI).
 
 ## Installation
 
