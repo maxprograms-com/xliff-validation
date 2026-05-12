@@ -12,7 +12,6 @@
  *************************************************************************** ***/
 
 import { existsSync } from "node:fs";
-import { platform } from "node:os";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { XliffDocument, XliffParser } from "typesxliff";
@@ -41,8 +40,8 @@ export class XLIFFValidator {
             process.exit(1);
         }
         if (catalogFile === '') {
-            const __filename = fileURLToPath(import.meta.url);
-            const __dirname = dirname(__filename);
+            const __filename: string = fileURLToPath(import.meta.url);
+            const __dirname: string = dirname(__filename);
             catalogFile = join(__dirname, 'catalog', 'catalog.xml');
         } else {
             if (!existsSync(catalogFile)) {
