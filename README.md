@@ -36,7 +36,7 @@ Use a custom catalog file (optional):
 
 Executing `./dist/xliffvalidator.sh -help` prints:
 
-```
+``` text
 Usage:
 
   xliffvalidator.sh -xliff <file> [-catalog <file>] [-help]
