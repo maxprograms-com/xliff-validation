@@ -1,6 +1,6 @@
 {
   "name": "xliff-validation",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "XLIFF validation tool based on TypesXLIFF package",
   "keywords": [
     "XLIFF",
@@ -33,7 +33,7 @@
     "dist"
   ],
   "devDependencies": {
-    "@types/node": "^24.12.2",
+    "@types/node": "^24.12.4",
     "typescript": "^6.0.3"
   },
   "dependencies": {
