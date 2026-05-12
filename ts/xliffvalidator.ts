@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /*** ***************************************************************************
  * Copyright (c) 2026 Maxprograms.
  *
@@ -12,7 +13,8 @@
 
 import { existsSync } from "node:fs";
 import { platform } from "node:os";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 import { XliffDocument, XliffParser } from "typesxliff";
 import { Catalog } from "typesxml";
 
@@ -39,7 +41,9 @@ export class XLIFFValidator {
             process.exit(1);
         }
         if (catalogFile === '') {
-            catalogFile = join(process.cwd(), 'catalog', 'catalog.xml');
+            const __filename = fileURLToPath(import.meta.url);
+            const __dirname = dirname(__filename);
+            catalogFile = join(__dirname, 'catalog', 'catalog.xml');
         } else {
             if (!existsSync(catalogFile)) {
                 console.error('Catalog file "' + catalogFile + '" does not exist.');
@@ -72,9 +76,8 @@ export class XLIFFValidator {
     }
 
     usage(): void {
-        let command: string = platform() === 'win32' ? 'xliffvalidator.cmd' : 'xliffvalidator.sh';
         console.log('Usage:\n');
-        console.log('  ' + command + ' -xliff <file> [-catalog <file>] [-help]\n');
+        console.log('  xliffvalidator -xliff <file> [-catalog <file>] [-help]\n');
         console.log('Options:\n');
         console.log('  -xliff <file>    Path to the XLIFF file to validate (required)');
         console.log('  -catalog <file>  (optional) Path to a custom catalog file');

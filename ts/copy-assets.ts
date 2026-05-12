@@ -10,18 +10,6 @@
  *     Maxprograms - initial API and implementation
  *******************************************************************************/
 
-import { chmodSync, copyFileSync, cpSync, statSync } from 'node:fs';
-import { basename, join } from 'node:path';
-
-const files = ['xliffvalidator.cmd', 'xliffvalidator.sh'];
-
-for (const file of files) {
-    let filepath = join('dist', basename(file));
-    copyFileSync(file, filepath);
-    const stats = statSync(filepath);
-    let newMode = stats.mode;
-    newMode |= 0o111; // Octal: execute bits
-    chmodSync(filepath, newMode);
-}
+import { cpSync } from 'node:fs';
 
 cpSync('./catalog', './dist/catalog', { recursive: true });

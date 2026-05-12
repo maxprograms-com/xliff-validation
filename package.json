@@ -25,8 +25,10 @@
   "main": "xliffvalidator.js",
   "scripts": {
     "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
-     "build": "npm run clean && tsc && node dist/copy-assets.js"
+     "build": "npm run clean && tsc && node dist/copy-assets.js && node -e \"require('node:fs').chmodSync('dist/xliffvalidator.js', 0o755)\" || true",
+    "postinstall": "node -e \"require('node:fs').chmodSync('dist/xliffvalidator.js', 0o755)\" || true"
   },
+  "files": ["dist", "catalog"],
   "devDependencies": {
     "@types/node": "^24.12.2",
     "typescript": "^6.0.3"
@@ -34,5 +36,8 @@
   "dependencies": {
     "typesxliff": "^0.6.0",
     "typesxml": "^2.1.0"
+  },
+  "bin": {
+    "xliffvalidator": "./dist/xliffvalidator.js"
   }
 }
