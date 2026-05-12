@@ -29,7 +29,9 @@
     "prepack": "npm run build",
     "postinstall": "node -e \"const fs=require('node:fs'); const p='dist/xliffvalidator.js'; if (fs.existsSync(p)) { try { fs.chmodSync(p, 0o755); } catch {} }\""
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "devDependencies": {
     "@types/node": "^24.12.2",
     "typescript": "^6.0.3"
@@ -39,6 +41,6 @@
     "typesxml": "^2.1.0"
   },
   "bin": {
-    "xliffvalidator": "./dist/xliffvalidator.js"
+    "xliffvalidator": "dist/xliffvalidator.js"
   }
 }
