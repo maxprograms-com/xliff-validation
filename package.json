@@ -22,13 +22,14 @@
     "email": "rmraya@maxprograms.com"
   },
   "type": "module",
-  "main": "xliffvalidator.js",
+  "main": "./dist/xliffvalidator.js",
   "scripts": {
     "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
-     "build": "npm run clean && tsc && node dist/copy-assets.js && node -e \"require('node:fs').chmodSync('dist/xliffvalidator.js', 0o755)\" || true",
-    "postinstall": "node -e \"require('node:fs').chmodSync('dist/xliffvalidator.js', 0o755)\" || true"
+    "build": "npm run clean && tsc && node dist/copy-assets.js && node -e \"const fs=require('node:fs'); const p='dist/xliffvalidator.js'; if (fs.existsSync(p)) { try { fs.chmodSync(p, 0o755); } catch {} }\"",
+    "prepack": "npm run build",
+    "postinstall": "node -e \"const fs=require('node:fs'); const p='dist/xliffvalidator.js'; if (fs.existsSync(p)) { try { fs.chmodSync(p, 0o755); } catch {} }\""
   },
-  "files": ["dist", "catalog"],
+  "files": ["dist"],
   "devDependencies": {
     "@types/node": "^24.12.2",
     "typescript": "^6.0.3"
