@@ -1,0 +1,85 @@
+/*** ***************************************************************************
+ * Copyright (c) 2026 Maxprograms.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse License 1.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/org/documents/epl-v10.html
+ *
+ * Contributors:
+ *     Maxprograms - initial API and implementation
+ *************************************************************************** ***/
+
+import { existsSync } from "node:fs";
+import { platform } from "node:os";
+import { join, resolve } from "node:path";
+import { XliffDocument, XliffParser } from "typesxliff";
+import { Catalog } from "typesxml";
+
+export class XLIFFValidator {
+
+    constructor() {
+        let xliffFile: string = '';
+        let catalogFile: string = '';
+        let args: string[] = process.argv;
+        for (let i = 0; i < args.length; i++) {
+            if (args[i] === '-catalog' && i + 1 < args.length) {
+                catalogFile = args[i + 1];
+            }
+            if (args[i] === '-xliff' && i + 1 < args.length) {
+                xliffFile = args[i + 1];
+            }
+            if (args[i] === '-help' || args[i] === '--help') {
+                this.usage();
+                process.exit(0);
+            }
+        }
+        if (xliffFile === '') {
+            this.usage();
+            process.exit(1);
+        }
+        if (catalogFile === '') {
+            catalogFile = join(process.cwd(), 'catalog', 'catalog.xml');
+        } else {
+            if (!existsSync(catalogFile)) {
+                console.error('Catalog file "' + catalogFile + '" does not exist.');
+                process.exit(1);
+            }
+            catalogFile = resolve(catalogFile);
+        }
+        const catalog: Catalog = new Catalog(catalogFile);
+        const parser: XliffParser = new XliffParser();
+        parser.setCatalog(catalog);
+        parser.setValidating(true);
+        try {
+            parser.parseFile(xliffFile);
+            let document: XliffDocument | undefined = parser.getXliffDocument();
+            if (document) {
+                if (document.isValid()) {
+                    console.log('XLIFF file is valid');
+                } else {
+                    console.error('XLIFF file is invalid');
+                    console.log(document.getValidationError());
+                }
+            }
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.error('XLIFF file is invalid:', error.message);
+            } else {
+                console.error('XLIFF file is invalid:', error);
+            }
+        }
+    }
+
+    usage(): void {
+        let command: string = platform() === 'win32' ? 'xliffvalidator.cmd' : 'xliffvalidator.sh';
+        console.log('Usage:\n');
+        console.log('  ' + command + ' -xliff <file> [-catalog <file>] [-help]\n');
+        console.log('Options:\n');
+        console.log('  -xliff <file>    Path to the XLIFF file to validate (required)');
+        console.log('  -catalog <file>  (optional) Path to a custom catalog file');
+        console.log('  -help            (optional) Show this help message and exit');
+    }
+}
+
+new XLIFFValidator();

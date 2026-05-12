@@ -1,0 +1,38 @@
+{
+  "name": "xliff-validation",
+  "version": "1.0.0",
+  "description": "XLIFF validation tool based on TypesXLIFF package",
+  "keywords": [
+    "XLIFF",
+    "validation",
+    "TypesXLIFF"
+  ],
+  "homepage": "https://github.com/maxprograms-com/xliff-validation#readme",
+  "bugs": {
+    "url": "https://github.com/maxprograms-com/xliff-validation/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maxprograms-com/xliff-validation.git"
+  },
+  "license": "EPL-1.0",
+  "author": {
+    "name": "Rodolfo M. Raya",
+    "url": "https://maxprograms.com",
+    "email": "rmraya@maxprograms.com"
+  },
+  "type": "module",
+  "main": "xliffvalidator.js",
+  "scripts": {
+    "clean": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\"",
+     "build": "npm run clean && tsc && node dist/copy-assets.js"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "typescript": "^6.0.3"
+  },
+  "dependencies": {
+    "typesxliff": "^0.6.0",
+    "typesxml": "^2.1.0"
+  }
+}
