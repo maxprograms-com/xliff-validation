@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-/*** ***************************************************************************
+/*******************************************************************************
  * Copyright (c) 2026 Maxprograms.
  *
  * This program and the accompanying materials
- * are made available under the terms of the Eclipse License 1.0
+ * are made available under the terms of the Eclipse Public License 1.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/org/documents/epl-v10.html
  *
  * Contributors:
  *     Maxprograms - initial API and implementation
- *************************************************************************** ***/
+ *******************************************************************************/
 
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
@@ -31,7 +31,7 @@ export class XLIFFValidator {
             if (args[i] === '-xliff' && i + 1 < args.length) {
                 xliffFile = args[i + 1];
             }
-            if (args[i] === '-help' || args[i] === '--help') {
+            if (args[i] === '-help') {
                 this.usage();
                 process.exit(0);
             }
@@ -50,11 +50,23 @@ export class XLIFFValidator {
             }
         }
         xliffFile = resolve(xliffFile);
+        if (!existsSync(xliffFile)) {
+            console.error('XLIFF file "' + xliffFile + '" does not exist.');
+            process.exit(1);
+        }
         if (catalogFile === '') {
             const __filename: string = fileURLToPath(import.meta.url);
             const __dirname: string = dirname(__filename);
             catalogFile = join(__dirname, 'catalog', 'catalog.xml');
         } else {
+            if (catalogFile.startsWith('~')) {
+                const home: string = homedir();
+                if (catalogFile === '~') {
+                    catalogFile = home;
+                } else if (catalogFile.startsWith('~/')) {
+                    catalogFile = join(home, catalogFile.slice(2));
+                }
+            }
             if (!existsSync(catalogFile)) {
                 console.error('Catalog file "' + catalogFile + '" does not exist.');
                 process.exit(1);
@@ -67,7 +79,7 @@ export class XLIFFValidator {
         parser.setValidating(true);
         try {
             parser.parseFile(xliffFile);
-            let document: XliffDocument | undefined = parser.getXliffDocument();
+            const document: XliffDocument | undefined = parser.getXliffDocument();
             if (document) {
                 const version: string = document.getVersion();
                 let namespace: string = '';
@@ -79,7 +91,7 @@ export class XLIFFValidator {
                 }
                 if (namespace === '') {
                     console.error('XLIFF file is invalid');
-                    console.log('Namespace declaration is missing');
+                    console.error('Namespace declaration is missing');
                     process.exit(1);
                 }
                 switch (version) {
@@ -87,28 +99,33 @@ export class XLIFFValidator {
                     case '2.1':
                         if (namespace !== 'urn:oasis:names:tc:xliff:document:2.0') {
                             console.error('XLIFF file is invalid');
-                            console.log('Namespace declaration is invalid for version ' + version);
+                            console.error('Namespace declaration is invalid for version ' + version);
                             process.exit(1);
                         }
                         break;
                     case '2.2':
                         if (namespace !== 'urn:oasis:names:tc:xliff:document:2.2') {
                             console.error('XLIFF file is invalid');
-                            console.log('Namespace declaration is invalid for version ' + version);
+                            console.error('Namespace declaration is invalid for version ' + version);
                             process.exit(1);
                         }
                         break;
                     default:
                         console.error('XLIFF file is invalid');
-                        console.log('Unsupported XLIFF version: ' + version);
+                        console.error('Unsupported XLIFF version: ' + version);
                         process.exit(1);
                 }
                 if (document.isValid()) {
                     console.log('XLIFF file is valid');
                 } else {
                     console.error('XLIFF file is invalid');
-                    console.log(document.getValidationError());
+                    console.error(document.getValidationError());
+                    process.exit(1);
                 }
+            } else {
+                console.error('XLIFF file is invalid');
+                console.error('Failed to parse XLIFF file');
+                process.exit(1);
             }
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -116,6 +133,7 @@ export class XLIFFValidator {
             } else {
                 console.error('XLIFF file is invalid:', error);
             }
+            process.exit(1);
         }
     }
 
